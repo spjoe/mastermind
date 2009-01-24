@@ -1,0 +1,15 @@
+rev1:
+Author:mich
+memset statt schleife und +1 aus col weg
+
+rev2:
+Author: camillo
+compint verbessert
+
+rev3:
+Author:camillo
+eval5 added + inline
+
+rev4:
+Author: faras
+static statt memset

@@ -31,10 +31,8 @@ inline static void printpos(Position p)
 inline void eval(Position x, Position y, int *blackp, int *whitep)
 {
   int blacks, whites, i,j;
-  int used[MAXCOL]; /* which pegs of y have already been used for matching? */
+  int used[MAXCOL] = {0}; /* which pegs of y have already been used for matching? */
   char colx[MAXCOL], coly[MAXCOL];
-
-  memset(used,0,sizeof(used));
 
   for (i=0, blacks=0; i<columns; i++)
     if (col(i,x) == col(i,y)) {
@@ -60,10 +58,9 @@ inline void eval5(Position x, Position y, int *blackp, int *whitep)
 {
   const int columns = 5; 
   int blacks, whites, i,j;
-  int used[MAXCOL]; /* which pegs of y have already been used for matching? */
+  int used[MAXCOL] = {0}; /* which pegs of y have already been used for matching? */
   char colx[MAXCOL], coly[MAXCOL];
 
-  memset(used,0,sizeof(used));
 
   for (i=0, blacks=0; i<columns; i++)
     if (col(i,x) == col(i,y)) {
@@ -101,11 +98,9 @@ inline int reply(Position try, Position possible[], int npossible, int blacks, i
 
 inline void evalmove(Position try, Position possible[], int npossible, int in_possible, double *lengthp, double *posp, int *maxp)
 {
-  int counts[MAXCOL][MAXCOL];
+  int counts[MAXCOL][MAXCOL] = {{0}};
   double value, length, sumsq;
   int i,j,b,w, max;
-
-  memset(counts,0,sizeof(counts));
 
   for (i=0; i<npossible; i++) {
     if(columns == 5)
