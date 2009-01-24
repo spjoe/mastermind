@@ -17,6 +17,12 @@ int columns;
 int maxpos;
 double info;
 
+static int compint(const void *p1, const void *p2)
+{
+  return *(int *)p1 - *(int *)p2;
+}
+
+
 inline static Colour col(int n, Position x)
 {
   return ((x>>(3*n))&7);
@@ -31,26 +37,22 @@ inline static void printpos(Position p)
 inline void eval(Position x, Position y, int *blackp, int *whitep)
 {
   int blacks, whites, i,j;
-  int used[MAXCOL] = {0}; /* which pegs of y have already been used for matching? */
-  char colx[MAXCOL], coly[MAXCOL];
+  char cola[8] = {0};
 
-  for (i=0, blacks=0; i<columns; i++)
+  for (i=0, blacks=0; i<columns; i++){
+    cola[col(i,y)]++;
     if (col(i,x) == col(i,y)) {
       blacks++;
-      used[i]=1;
     }
+  }
   for (i=0, whites=0; i<columns; i++)
-    if (col(i,x) != col(i,y))
-      for (j=0; j<columns; j++)
-	if (!used[j])
-	  if (col(i,x) == col(j,y)) {
-	    whites++;
-	    used[j]=1;
-	    break;
-	  }
-  /* printf("eval: x="); printpos(x); printf(" y="); printpos(y); printf(" result=%d-%d\n",blacks, whites); */
+    if (cola[col(i,x)] > 0){
+        whites++;
+        cola[col(i,x)]--;
+    }
+
   *blackp = blacks;
-  *whitep = whites;
+  *whitep = whites - blacks;
 }
 
 
@@ -58,27 +60,22 @@ inline void eval5(Position x, Position y, int *blackp, int *whitep)
 {
   const int columns = 5; 
   int blacks, whites, i,j;
-  int used[MAXCOL] = {0}; /* which pegs of y have already been used for matching? */
-  char colx[MAXCOL], coly[MAXCOL];
+  char cola[8] = {0};
 
-
-  for (i=0, blacks=0; i<columns; i++)
+  for (i=0, blacks=0; i<columns; i++){
+    cola[col(i,y)]++;
     if (col(i,x) == col(i,y)) {
       blacks++;
-      used[i]=1;
     }
+  }
   for (i=0, whites=0; i<columns; i++)
-    if (col(i,x) != col(i,y))
-      for (j=0; j<columns; j++)
-	if (!used[j])
-	  if (col(i,x) == col(j,y)) {
-	    whites++;
-	    used[j]=1;
-	    break;
-	  }
-  /* printf("eval: x="); printpos(x); printf(" y="); printpos(y); printf(" result=%d-%d\n",blacks, whites); */
+    if (cola[col(i,x)] > 0){
+        whites++;
+        cola[col(i,x)]--;
+    }
+
   *blackp = blacks;
-  *whitep = whites;
+  *whitep = whites - blacks;
 }
 
 inline int reply(Position try, Position possible[], int npossible, int blacks, int whites)
@@ -131,11 +128,6 @@ inline void evalmove(Position try, Position possible[], int npossible, int in_po
   *lengthp = length/info;
   *posp = sumsq/npossible;
   *maxp = max;
-}
-
-static int compint(const void *p1, const void *p2)
-{
-  return *(int *)p1 - *(int *)p2;
 }
 
 inline Position makemove(Position possible[], int npossible)
