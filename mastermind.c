@@ -29,7 +29,7 @@ typedef struct {
 
 static Colour col(int n, Position x)
 {
-  return ((x>>(3*n))&7)+1;
+  return ((x>>(3*n))&7);
 }
 
 static void printpos(Position p)
@@ -37,7 +37,7 @@ static void printpos(Position p)
   int i;
 
   for(i=0; i<columns; i++)
-    printf("%d", col(i,p));
+    printf("%d", col(i,p)+1);
 }
 
 void eval (Position x, Position y, int *blackp, int *whitep)
@@ -45,8 +45,8 @@ void eval (Position x, Position y, int *blackp, int *whitep)
   int blacks, whites, i,j;
   int used[MAXCOL]; /* which pegs of y have already been used for matching? */
 
-  for (i=0; i<columns; i++)
-    used[i]=0;
+  memset(used,0,sizeof(used));
+
   for (i=0, blacks=0; i<columns; i++)
     if (col(i,x) == col(i,y)) {
       blacks++;
@@ -84,9 +84,8 @@ void evalmove(Position try, Position possible[], int npossible, int in_possible,
   double value, length, sumsq;
   int i,j,b,w, max;
 
-  for (i=0; i<MAXCOL; i++)
-    for (j=0; j<MAXCOL; j++)
-      counts[i][j]=0;
+  memset(counts,0,sizeof(counts));
+
   for (i=0; i<npossible; i++) {
     eval(try, possible[i], &b, &w);
 /*    printf("eval(%o,%o,%d-%d)\n",try,possible[i],b,w);*/
