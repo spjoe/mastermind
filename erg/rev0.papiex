@@ -1,0 +1,7 @@
+24803576         Real usecs
+65977505740      Real cycles
+24800342         Proc usecs
+65968905740      Proc cycles
+0                I/O cycles
+125610539915     PAPI_TOT_INS
+1063373577       PAPI_BR_MSP
