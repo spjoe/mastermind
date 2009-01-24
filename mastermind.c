@@ -7,12 +7,9 @@
 #define COLOURS	8
 #define COLOURSHIFT 3
 #define MAXPOS (1<<(COLOURSHIFT*MAXCOL))
-#define MAXLOWPOS (1<<(COLOURSHIFT*HALFCOL))
 
 #define MIN(a,b) ((a<b)?(a):(b))
 
-#define POSHIGH(p) ((p)/MAXLOWPOS)
-#define POSLOW(p)  ((p)&(MAXLOWPOS-1))
 
 typedef int Colour;
 typedef int Position;
@@ -22,11 +19,6 @@ int columns;
 int maxpos;
 double info;
 
-typedef struct {
-  short low;  /* Identifiziert die Anzahl der kleinen Farben in einer Position */
-  short high; /* dasselbe fuer die grossen Farben */
-} Colours;
-
 static Colour col(int n, Position x)
 {
   return ((x>>(3*n))&7);
@@ -35,7 +27,6 @@ static Colour col(int n, Position x)
 static void printpos(Position p)
 {
   int i;
-
   for(i=0; i<columns; i++)
     printf("%d", col(i,p)+1);
 }
@@ -44,6 +35,7 @@ void eval (Position x, Position y, int *blackp, int *whitep)
 {
   int blacks, whites, i,j;
   int used[MAXCOL]; /* which pegs of y have already been used for matching? */
+  char colx[MAXCOL], coly[MAXCOL];
 
   memset(used,0,sizeof(used));
 
@@ -116,15 +108,7 @@ void evalmove(Position try, Position possible[], int npossible, int in_possible,
 
 static int compint(const void *p1, const void *p2)
 {
-  int i1 = *(int *)p1;
-  int i2 = *(int *)p2;
-
-  if (i1 < i2)
-    return -1;
-  else if (i1 > i2)
-    return 1;
-  else
-    return 0;
+  return *(int *)p1 - *(int *)p2;
 }
 
 Position makemove(Position possible[], int npossible)
