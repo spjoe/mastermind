@@ -8,30 +8,27 @@
 #define COLOURSHIFT 3
 #define MAXPOS (1<<(COLOURSHIFT*MAXCOL))
 
-#define MIN(a,b) ((a<b)?(a):(b))
-
 
 typedef int Colour;
 typedef int Position;
 
-int colours=8;
-int columns;
+const int colours = 8;
+int columns = 5;
 int maxpos;
 double info;
 
-static Colour col(int n, Position x)
+inline static Colour col(int n, Position x)
 {
   return ((x>>(3*n))&7);
 }
 
-static void printpos(Position p)
+inline static void printpos(Position p)
 {
   int i;
   for(i=0; i<columns; i++)
     printf("%d", col(i,p)+1);
 }
-
-void eval (Position x, Position y, int *blackp, int *whitep)
+inline void eval(Position x, Position y, int *blackp, int *whitep)
 {
   int blacks, whites, i,j;
   int used[MAXCOL]; /* which pegs of y have already been used for matching? */
@@ -58,19 +55,51 @@ void eval (Position x, Position y, int *blackp, int *whitep)
   *whitep = whites;
 }
 
-int reply(Position try, Position possible[], int npossible, int blacks, int whites)
+
+inline void eval5(Position x, Position y, int *blackp, int *whitep)
+{
+  const int columns = 5; 
+  int blacks, whites, i,j;
+  int used[MAXCOL]; /* which pegs of y have already been used for matching? */
+  char colx[MAXCOL], coly[MAXCOL];
+
+  memset(used,0,sizeof(used));
+
+  for (i=0, blacks=0; i<columns; i++)
+    if (col(i,x) == col(i,y)) {
+      blacks++;
+      used[i]=1;
+    }
+  for (i=0, whites=0; i<columns; i++)
+    if (col(i,x) != col(i,y))
+      for (j=0; j<columns; j++)
+	if (!used[j])
+	  if (col(i,x) == col(j,y)) {
+	    whites++;
+	    used[j]=1;
+	    break;
+	  }
+  /* printf("eval: x="); printpos(x); printf(" y="); printpos(y); printf(" result=%d-%d\n",blacks, whites); */
+  *blackp = blacks;
+  *whitep = whites;
+}
+
+inline int reply(Position try, Position possible[], int npossible, int blacks, int whites)
 {
   int i,j,b,w;
 
   for (i=0, j=0; i<npossible; i++) {
-    eval(try,possible[i],&b,&w);
+    if(columns == 5)
+        eval5(try,possible[i],&b,&w);
+    else
+        eval(try,possible[i],&b,&w);
     if (b==blacks && w==whites)
       possible[j++]=possible[i];
   }
   return j;
 }
 
-void evalmove(Position try, Position possible[], int npossible, int in_possible, double *lengthp, double *posp, int *maxp)
+inline void evalmove(Position try, Position possible[], int npossible, int in_possible, double *lengthp, double *posp, int *maxp)
 {
   int counts[MAXCOL][MAXCOL];
   double value, length, sumsq;
@@ -79,7 +108,10 @@ void evalmove(Position try, Position possible[], int npossible, int in_possible,
   memset(counts,0,sizeof(counts));
 
   for (i=0; i<npossible; i++) {
-    eval(try, possible[i], &b, &w);
+    if(columns == 5)
+        eval5(try, possible[i], &b, &w);
+    else
+        eval(try, possible[i], &b, &w);
 /*    printf("eval(%o,%o,%d-%d)\n",try,possible[i],b,w);*/
     counts[b][w]++;
   }
@@ -111,7 +143,7 @@ static int compint(const void *p1, const void *p2)
   return *(int *)p1 - *(int *)p2;
 }
 
-Position makemove(Position possible[], int npossible)
+inline Position makemove(Position possible[], int npossible)
 {
   Position p, bestlpos, bestwavpos, bestmaxpos;
   int bestlpos_possible, bestwavpos_possible, bestmaxpos_possible;
@@ -156,7 +188,7 @@ Position makemove(Position possible[], int npossible)
   return bestlpos;
 }
 
-Position make_guess(int b, int w)
+inline Position make_guess(int b, int w)
 {
   static Position p,move;
   static Position possible[MAXPOS];
@@ -170,9 +202,12 @@ Position make_guess(int b, int w)
   } else {
     if (npossible == maxpos) {
       for (p=0, npossible=0; p<maxpos; p++) {
-	eval(move,p,&b1,&w1);
-	if (b==b1 && w==w1)
-	  possible[npossible++] = p;
+        if(columns == 5)
+	        eval5(move,p,&b1,&w1);
+        else
+            eval(move,p,&b1,&w1);
+	    if (b==b1 && w==w1)
+	        possible[npossible++] = p;
       }
     } else
       npossible=reply(move,possible, npossible,b,w);
@@ -197,7 +232,7 @@ int main(int argc, char *argv[])
     exit(1);
   }
   s = argv[1];
-  columns = strlen(s);
+  //columns = strlen(s);
   for (i=columns-1, code=0; i>=0; i--) {
     char c = s[i];
     if (c<'1' || c>('0'+COLOURS))
