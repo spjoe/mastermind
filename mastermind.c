@@ -13,7 +13,7 @@ typedef int Colour;
 typedef int Position;
 
 const int colours = 8;
-int columns = 5;
+int columns;
 int maxpos;
 double info;
 
@@ -227,7 +227,7 @@ int main(int argc, char *argv[])
     exit(1);
   }
   s = argv[1];
-  //columns = strlen(s);
+  columns = strlen(s);
   for (i=columns-1, code=0; i>=0; i--) {
     char c = s[i];
     if (c<'1' || c>('0'+COLOURS))
