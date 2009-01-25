@@ -17,3 +17,7 @@ static statt memset
 rev5:
 Author: Camillo
 eval umgeschrieben
+
+rev6:
+Author: Camillo
+makemove nur possible evalmove

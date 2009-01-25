@@ -133,7 +133,7 @@ inline void evalmove(Position try, Position possible[], int npossible, int in_po
 inline Position makemove(Position possible[], int npossible)
 {
   Position p, bestlpos, bestwavpos, bestmaxpos;
-  int bestlpos_possible, bestwavpos_possible, bestmaxpos_possible;
+  int bestlpos_possible, bestwavpos_possible, bestmaxpos_possible,i;
   double length, bestlength, wavpositions, bestwavpositions;
   int maxpositions, bestmaxpositions;
 
@@ -146,23 +146,24 @@ inline Position makemove(Position possible[], int npossible)
   bestmaxpositions = npossible+1;
   bestmaxpos = -1;
   bestmaxpos_possible=0;
-  for (p=0; p<maxpos; p++) {
-    int in_possible =
-      bsearch(&p, possible, npossible, sizeof(possible[0]), compint)!=NULL;
-    evalmove(p, possible, npossible, in_possible, &length, &wavpositions, &maxpositions);
-    if (length<bestlength || (length == bestlength && !bestlpos_possible && in_possible)) {
+  for (i=0; i<npossible; i++) {
+    p = possible[i];
+    /*int in_possible =
+      bsearch(&p, possible, npossible, sizeof(possible[0]), compint)!=NULL;*/
+    evalmove(p, possible, npossible, (1 != 0), &length, &wavpositions, &maxpositions);
+    if (length<bestlength || (length == bestlength && !bestlpos_possible /*&& in_possible*/)) {
       bestlength=length;
-      bestlpos_possible = in_possible;
+      bestlpos_possible = (1 != 0);
       bestlpos=p;
     }
-    if (wavpositions<bestwavpositions || (wavpositions == bestwavpositions && !bestwavpos_possible && in_possible)) {
+    if (wavpositions<bestwavpositions || (wavpositions == bestwavpositions && !bestwavpos_possible /*&& in_possible*/)) {
       bestwavpositions=wavpositions;
-      bestwavpos_possible = in_possible;
+      bestwavpos_possible = (1 != 0);
       bestwavpos=p;
     }
-    if (maxpositions<bestmaxpositions || (maxpositions == bestmaxpositions && !bestmaxpos_possible && in_possible)) {
+    if (maxpositions<bestmaxpositions || (maxpositions == bestmaxpositions && !bestmaxpos_possible /*&& in_possible*/)) {
       bestmaxpositions = maxpositions;
-      bestmaxpos_possible = in_possible;
+      bestmaxpos_possible = (1 != 0);
       bestmaxpos=p;
     }
   }
