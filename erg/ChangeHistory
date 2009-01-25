@@ -21,3 +21,9 @@ eval umgeschrieben
 rev6:
 Author: Camillo
 makemove nur possible evalmove
+
+rev7:
+Author: ferry
+makemove, evalmove umgeschrieben
+in main for durch shiftop ersetzt
+ 

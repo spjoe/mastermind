@@ -1,0 +1,20 @@
+orig:
+24808401         Real usecs
+65990340850      Real cycles
+24801529         Proc usecs
+65972064450      Proc cycles
+0                I/O cycles
+125610542714     PAPI_TOT_INS
+1063424732       PAPI_BR_MSP
+
+change:
+21391217         Real usecs
+56900631720      Real cycles
+21380771         Proc usecs
+56872847050      Proc cycles
+0                I/O cycles
+108711669363     PAPI_TOT_INS
+910990967        PAPI_BR_MSP
+
+aenderungen im code sind mit //michi gekennzeichnet
+nur init arrays und col fkt verändert.
